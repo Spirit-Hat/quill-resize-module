@@ -1,0 +1,50 @@
+name: Build and Push to Master
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dev branch
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build for production
+        run: npm run build:prod
+
+      - name: Save dist to temp folder
+        run: |
+          mkdir build-output
+          cp -R dist build-output/
+
+      - name: Checkout master branch
+        uses: actions/checkout@v3
+        with:
+          ref: master
+          path: master-branch
+
+      - name: Sync dist to master
+        run: |
+          rm -rf master-branch/dist
+          cp -R build-output/dist master-branch/dist
+
+      - name: Commit and push to master
+        run: |
+          cd master-branch
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist
+          git diff --cached --quiet dist || git commit -m "Auto-build dist from dev"
+          git push origin master
