@@ -1,3 +1,6 @@
+console.log("hello from JS script")
+
+
 import 'quill/dist/quill.snow.css'
 import '../src/assets/resize.scss'
 
@@ -5,6 +8,7 @@ import Resize from '../src/index'
 
 import _Quill from 'quill'
 const Quill = window.Quill || _Quill
+
 
 Quill.register('modules/resize', Resize)
 
@@ -59,3 +63,4 @@ document.querySelector('.btn-undo').addEventListener('click', function () {
 document.querySelector('.btn-redo').addEventListener('click', function () {
   demoEditor.history.redo()
 })
+
